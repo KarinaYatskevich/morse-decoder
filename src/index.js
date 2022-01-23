@@ -38,16 +38,33 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-    return expr.match(/.{10}/g).
-        reduce((result, encoded_letter) =>
-            result + (encoded_letter.match(/\*/)
-                    ? ' '
-                    : MORSE_TABLE[
-                    encoded_letter.
-                    replace(/^0+/g, '').
-                    replace(/11/g, '-').
-                    replace(/10/g, '.')]), '');
-}
+    const dot = '10';
+    const slash = '11';
+    const space = ' '
+    let message = '';
+    let morseCode = '';
+        const words = expr.split(`**********`);
+        words.forEach(word => {
+            if (message.length > 1) {
+                message += space;
+            }
+            for (let i = 0; i < word.length; i+= 10) {
+                let letter = [];
+                letter = word.slice(i,i + 10);
+          
+          for (let j = 0; j < letter.length - 1; j+=2) {
+              if(letter[j]+letter[j+1] === dot) {morseCode += '.';
+              }
+              if(letter[j]+letter[j+1] === slash) {
+            morseCode += '-';
+            }
+          }
+          message += MORSE_TABLE[morseCode];
+          morseCode = '';
+            }
+        });
+            return message;
+    }
 
 module.exports = {
     decode
